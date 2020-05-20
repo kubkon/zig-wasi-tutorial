@@ -8,10 +8,10 @@ decent intro to WASI from Zig lang.
 ## Building
 
 At the time of writing (May 19th, 2020), WASI support in Zig has only just been merged into upstream.
-Therefore, to build the tutorial you'll need to get your hands on Zig's source and build it
-yourself. It's actually very easy to do, and the instructions can be found in [Zig's official repo].
+Therefore, to build the tutorial you'll need to get your hands on the nightly Zig which can be found
+[here](https://ziglang.org/download/).
 
-After you've successfully built Zig, simply run
+After you've successfully installed nightly Zig, simply run
 
 ```
 $ zig build
