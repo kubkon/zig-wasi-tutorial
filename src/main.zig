@@ -2,7 +2,6 @@ const std = @import("std");
 const allocator = std.heap.page_allocator;
 const io = std.io;
 const fs = std.fs;
-const Allocator = std.mem.Allocator;
 const process = std.process;
 const PreopenList = std.fs.wasi.PreopenList;
 
