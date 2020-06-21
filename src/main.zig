@@ -6,28 +6,6 @@ const Allocator = std.mem.Allocator;
 const process = std.process;
 const PreopenList = std.fs.wasi.PreopenList;
 
-fn readToEnd(file: fs.File, alloc: *Allocator) anyerror![]u8 {
-    const ALLOC_SIZE: comptime usize = 10;
-
-    var buffer = try alloc.alloc(u8, ALLOC_SIZE);
-    defer alloc.free(buffer);
-
-    var total_read: usize = 0;
-    while (true) {
-        const nread = try file.readAll(buffer[total_read..]);
-        total_read += nread;
-
-        if (total_read < buffer.len) break;
-
-        buffer = try alloc.realloc(buffer, buffer.len + ALLOC_SIZE);
-    }
-
-    var contents = try alloc.alloc(u8, total_read);
-    std.mem.copy(u8, contents, buffer[0..total_read]);
-
-    return contents;
-}
-
 pub fn main() anyerror!void {
     // Extract cli args.
     const args = try process.argsAlloc(allocator);
@@ -51,7 +29,8 @@ pub fn main() anyerror!void {
 
         // We open the file for reading only
         var file = try dir.openFile(input_fn, .{});
-        const contents = try readToEnd(file, allocator);
+        const file_size = try file.getEndPos();
+        const contents = try file.readAllAlloc(allocator, file_size, @intCast(usize, file_size));
         defer allocator.free(contents);
 
         // Now, create a file for writing and copy the read contents in.
