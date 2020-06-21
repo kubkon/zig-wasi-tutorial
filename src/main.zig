@@ -29,8 +29,7 @@ pub fn main() anyerror!void {
 
         // We open the file for reading only
         var file = try dir.openFile(input_fn, .{});
-        const file_size = try file.getEndPos();
-        const contents = try file.readAllAlloc(allocator, file_size, std.math.maxInt(usize));
+        const contents = try file.reader().readAllAlloc(allocator, std.math.maxInt(usize));
         defer allocator.free(contents);
 
         // Now, create a file for writing and copy the read contents in.
