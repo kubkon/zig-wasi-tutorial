@@ -4,6 +4,7 @@ const io = std.io;
 const fs = std.fs;
 const process = std.process;
 const PreopenList = std.fs.wasi.PreopenList;
+const PreopenType = std.fs.wasi.PreopenType;
 
 pub fn main() anyerror!void {
     // Extract cli args.
@@ -23,7 +24,7 @@ pub fn main() anyerror!void {
     defer preopens.deinit();
     try preopens.populate();
 
-    if (preopens.find(".")) |pr| {
+    if (preopens.find(PreopenType{ .Dir = "." })) |pr| {
         const dir = fs.Dir{ .fd = pr.fd };
 
         // We open the file for reading only
