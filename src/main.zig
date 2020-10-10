@@ -1,12 +1,15 @@
 const std = @import("std");
-const allocator = std.heap.page_allocator;
 const io = std.io;
 const fs = std.fs;
 const process = std.process;
 const PreopenList = std.fs.wasi.PreopenList;
 const PreopenType = std.fs.wasi.PreopenType;
 
+var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+
 pub fn main() anyerror!void {
+    const allocator = &gpa.allocator;
+
     // Extract cli args.
     const args = try process.argsAlloc(allocator);
     defer process.argsFree(allocator, args);
