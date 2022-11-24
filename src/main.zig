@@ -8,14 +8,14 @@ const PreopenType = std.fs.wasi.PreopenType;
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 
 pub fn main() anyerror!void {
-    const allocator = &gpa.allocator;
+    const allocator = gpa.allocator();
 
     // Extract cli args.
     const args = try process.argsAlloc(allocator);
     defer process.argsFree(allocator, args);
 
     if (args.len < 3) {
-        const stderr = io.getStdErr().outStream();
+        const stderr = io.getStdErr().writer();
         try stderr.print("not enough arguments: you need to specify the input and output file paths", .{});
         return;
     }
@@ -25,7 +25,7 @@ pub fn main() anyerror!void {
     // Fetch preopens from the VM.
     var preopens = PreopenList.init(allocator);
     defer preopens.deinit();
-    try preopens.populate();
+    try preopens.populate(null);
 
     if (preopens.find(PreopenType{ .Dir = "." })) |pr| {
         const dir = fs.Dir{ .fd = pr.fd };
@@ -39,7 +39,7 @@ pub fn main() anyerror!void {
         var out = try dir.createFile(output_fn, .{});
         try out.writeAll(contents);
     } else {
-        const stderr = io.getStdErr().outStream();
+        const stderr = io.getStdErr().writer();
         try stderr.print("capabilities insufficient: '.' dir not found", .{});
     }
 }
